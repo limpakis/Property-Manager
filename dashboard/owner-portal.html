@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: #fff; 
+            color: #111;
+        }
+        .header { 
+            padding: 40px 20px 60px; 
+            border-bottom: 1px solid #eee;
+        }
+        .header h1 { font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+        .header p { color: #666; font-size: 14px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .section { margin-bottom: 60px; }
+        .section h2 { font-size: 18px; margin-bottom: 32px; font-weight: 600; }
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 24px; 
+            margin-bottom: 40px;
+        }
+        .stat-box { padding: 32px 0; border-bottom: 1px solid #eee; }
+        .stat-box .label { font-size: 11px; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+        .stat-box .value { font-size: 36px; font-weight: 300; }
+        .property-item { 
+            border-bottom: 1px solid #f5f5f5; 
+            padding: 24px 0; 
+        }
+        .property-item h3 { font-size: 16px; margin-bottom: 8px; font-weight: 500; }
+        .property-item p { font-size: 13px; color: #666; margin-bottom: 16px; }
+        .property-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+        .property-stat .label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
+        .property-stat .value { font-size: 18px; font-weight: 500; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { 
+            text-align: left; 
+            padding: 16px 0; 
+            font-size: 11px; 
+            font-weight: 500; 
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eee;
+        }
+        td { padding: 20px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            background: #111; 
+            color: white; 
+            text-decoration: none; 
+            font-size: 13px; 
+            border: none; 
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.7; }
+        .status { display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 500; }
+        .status.paid { background: #111; color: #fff; }
+        .status.pending { background: #f5f5f5; color: #666; }
+        .status.late { background: #111; color: #fff; }
+        .document-link { color: #111; text-decoration: underline; }
+        .empty-state { text-align: center; color: #999; padding: 60px 20px; font-size: 13px; }
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .header { padding: 24px 16px 40px; }
+            .header h1 { font-size: 24px; }
+            .stats { grid-template-columns: 1fr; gap: 0; }
+            .property-stats { flex-direction: column; gap: 16px; }
+            .section { margin-bottom: 40px; }
+            table { font-size: 13px; }
+            th, td { padding: 12px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Owner Portal</h1>
+            <p>Welcome, [Owner Name]</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Portfolio Overview</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="label">Properties</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Monthly Income</div>
+                    <div class="value">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Collected</div>
+                    <div class="value">$0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">YTD Net</div>
+                    <div class="value">$0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Your Properties</h2>
+            <div id="property-list">
+                <div class="property-item">
+                    <div>
+                        <h3>123 Maple Street</h3>
+                        <p>Single Family Home • 3 BD / 2 BA</p>
+                        <div class="property-stats">
+                            <div class="property-stat">
+                                <div class="label">Tenant</div>
+                                <div class="value">Sarah Martinez</div>
+                            </div>
+                            <div class="property-stat">
+                                <div class="label">Monthly Rent</div>
+                                <div class="value">$1,800</div>
+                            </div>
+                            <div class="property-stat">
+                                <div class="label">Lease End</div>
+                                <div class="value">Dec 31, 2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-item">
+                    <div>
+                        <h3>321 Elm Drive</h3>
+                        <p>Condo • 2 BD / 2 BA</p>
+                        <div class="property-stats">
+                            <div class="property-stat">
+                                <div class="label">Tenant</div>
+                                <div class="value">Emily Rodriguez</div>
+                            </div>
+                            <div class="property-stat">
+                                <div class="label">Monthly Rent</div>
+                                <div class="value">$1,950</div>
+                            </div>
+                            <div class="property-stat">
+                                <div class="label">Lease End</div>
+                                <div class="value">Aug 20, 2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Recent Transactions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Property</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-class="empty-state">
+                            No transactions yet
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section
+
+        <div class="card">
+            <h2>Maintenance Activity</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Property</th>
+                        <th>Issue</th>
+                        <th>Status</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody id="maintenance-tclass="empty-state">
+                            No maintenance activity
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Documen
+        <div class="card">
+            <h2>Documents & Reports</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Document</th>
+                        <th>Property</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Management Agreement</td>
+                        <td>All Properties</td>
+                        <td>-</td>
+                        <td><a href="../documents/management-agreement-template.md" class="document-link">View</a></td>
+                    </tr>
+                    <tr>
+                        <td>Monthly Financial Statement</td>
+                        <td>All Properties</td>999;">Not yet generated</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" style="text-align: center; padding: 40px 0;">
+            <h2 style="margin-bottom: 16px;">Need Help?</h2>
+            <p style="margin-bottom: 24px; color: #666;">Contact your property manager
+            <h2>Need Help?</h2>
+            <p style="margin-bottom: 20px; color: #6c757d;">Contact your property manager for assistance</p>
+            <button class="btn">Contact Manager</button>
+        </div>
+    </div>
+
+    <script>
+        // Update stats with sample data
+        document.querySelector('.stat-box:nth-child(1) .value').textContent = '2';
+        document.querySelector('.stat-box:nth-child(2) .value').textContent = '$3,750';
+        document.querySelector('.stat-box:nth-child(3) .value').textContent = '$3,750';
+        document.querySelector('.stat-box:nth-child(4) .value').textContent = '$38,200';
+        
+        // In production, this would load owner-specific data from filtered CSV files
+        function loadOwnerData(ownerName) {
+            console.log('Loading data for owner:', ownerName);
+            // Parse properties.csv filtered by owner
+            // Parse maintenance-requests.csv for owner's properties
+            // Parse financial data
+        }
+    </script>
+</body>
+</html>

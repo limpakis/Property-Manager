@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: #fff; 
+            color: #111;
+        }
+        .header { 
+            padding: 40px 20px 60px; 
+            border-bottom: 1px solid #eee;
+        }
+        .header h1 { font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+        .header p { color: #666; font-size: 14px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .section { margin-bottom: 60px; }
+        .section h2 { font-size: 18px; margin-bottom: 32px; font-weight: 600; }
+        .alert-box { 
+            background: #f5f5f5; 
+            padding: 20px 24px; 
+            margin-bottom: 32px; 
+        }
+        .alert-box.danger { background: #111; color: #fff; }
+        .rent-info { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 24px; 
+            margin-bottom: 32px;
+        }
+        .rent-stat { padding: 24px 0; border-bottom: 1px solid #eee; }
+        .rent-stat .label { font-size: 11px; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+        .rent-stat .value { font-size: 28px; font-weight: 300; }
+        .btn { 
+            display: block;
+            width: 100%;
+            padding: 16px 24px; 
+            background: #111; 
+            color: white; 
+            text-decoration: none; 
+            font-size: 14px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 500;
+            transition: opacity 0.2s;
+            text-align: center;
+        }
+        .btn:hover { opacity: 0.7; }
+        .btn.secondary { background: #f5f5f5; color: #111; }
+        .btn.secondary:hover { background: #eee; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 13px; 
+        }
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #eee; 
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .document-list { list-style: none; }
+        .document-list li { 
+            padding: 20px 0; 
+            border-bottom: 1px solid #f5f5f5; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .document-list li:last-child { border-bottom: none; }
+        .maintenance-item { 
+            border-bottom: 1px solid #f5f5f5; 
+            padding: 20px 0; 
+        }
+        .maintenance-item h4 { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+        .maintenance-item p { font-size: 13px; color: #666; margin-top: 4px; }
+        .status { 
+            display: inline-block; 
+            padding: 4px 12px; 
+            font-size: 11px; 
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .status.pending { background: #f5f5f5; color: #666; }
+        .status.in-progress { background: #111; color: #fff; }
+        .status.completed { background: #f5f5f5; color: #666; }
+        .empty-state { text-align: center; color: #999; padding: 40px 20px; font-size: 13px; }
+        .info-table { width: 100%; }
+        .info-table td { padding: 12px 0; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        .info-table td:first-child { font-weight: 500; width: 40%; }
+        @media (max-width: 768px) {
+            .container { padding: 16px; }
+            .header { padding: 24px 16px 40px; }
+            .header h1 { font-size: 24px; }
+            .rent-info { grid-template-columns: 1fr; gap: 0; }
+            .section { margin-bottom: 40px; }
+            .document-list li { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .btn.secondary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Tenant Portal</h1>
+            <p>Welcome, [Tenant Name]</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="rent-alert" class="alert-box danger" style="display: none;">
+            Rent payment overdue. Please pay immediately to avoid late fees.
+        </div>
+
+        <div class="section">
+            <h2>Rent</h2>
+            <div class="rent-info">
+                <div class="rent-stat">
+                    <div class="label">Monthly Rent</div>
+                    <div class="value">$1,800</div>
+                </div>
+                <div class="rent-stat">
+                    <div class="label">Due Date</div>
+                    <div class="value">1st</div>
+                </div>
+                <div class="rent-stat">
+                    <div class="label">Next Payment</div>
+                    <div class="value">Mar 1</div>
+                </div>
+            </div>
+            <button class="btn">Pay Rent Online</button>
+            <p style="margin-top: 20px; font-size: 12px; color: #666; text-align: center;">
+                Bank Transfer • Check • Money Order<br>
+                Late fee: $50 + $10/day after the 5th
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Maintenance Request</h2>
+            <form id="maintenance-form">
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="priority" required>
+                        <option value="">Select priority...</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="standard">Standard</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" placeholder="Describe the issue..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Best Time for Access</label>
+                    <input type="text" id="access-time" placeholder="e.g., Monday-Friday 9am-5pm">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="For follow-up" required>
+                </div>
+                <button type="submit" class="btn">Submit Request</button>
+            </form>
+
+            <div style="margin-top: 40px;">
+                <h3 style="font-size: 14px; margin-bottom: 24px; font-weight: 600;">Request History</h3>
+                <div id="maintenance-list">
+                    <div class="maintenance-item">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h4>Kitchen sink dripping</h4>
+                            <span class="status in-progress">In Progress</span>
+                        </div>
+                        <p>Submitted: Feb 14, 2026</p>
+                        <p>Priority: Urgent • Assigned to: ABC Plumbing</p>
+                    </div>
+                    <div class="maintenance-item">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h4>Bedroom ceiling fan making noise</h4>
+                            <span class="status pending">Pending</span>
+                        </div>
+                        <p>Submitted: Feb 10, 2026</p>
+                        <p>Priority: Standard • Awaiting vendor assignment</p>
+                    </div>
+                    <div class="maintenance-item">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h4>HVAC filter replacement</h4>
+                            <span class="status completed">Completed</span>
+                        </div>
+                        <p>Submitted: Jan 25, 2026 • Completed: Jan 28, 2026</p>
+                        <p>Priority: Standard • Cost: $45</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Lease Information</h2>
+            <table class="info-table">
+                <tr>
+                    <td>Property Address:</td>
+                    <td>123 Maple Street</td>
+                </tr>
+                <tr>
+                    <td>Lease Start:</td>
+                    <td>Jan 1, 2026</td>
+                </tr>
+                <tr>
+                    <td>Lease End:</td>
+                    <td>Dec 31, 2026</td>
+                </tr>
+                <tr>
+                    <td>Security Deposit:</td>
+                    <td>$1,800</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Documents</h2>
+            <ul class="document-list">
+                <li>
+                    <span>Lease Agreement</span>
+                    <a href="#" class="btn secondary" style="padding: 8px 16px; font-size: 12px; width: auto;">Download</a>
+                </li>
+                <li>
+                    <span>Move-In Inspection</span>
+                    <a href="#" class="btn secondary" style="padding: 8px 16px; font-size: 12px; width: auto;">Download</a>
+                </li>
+                <li>
+                    <span>Payment History</span>
+                    <a href="#" class="btn secondary" style="padding: 8px 16px; font-size: 12px; width: auto;">Download</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Contact</h2>
+            <table class="info-table">
+                <tr>
+                    <td>Property Manager:</td>
+                    <td>Elite Property Management</td>
+                </tr>
+                <tr>
+                    <td>Office Hours:</td>
+                    <td>Mon-Fri, 9am-5pm</td>
+                </tr>
+                <tr>
+                    <td>Phone:</td>
+                    <td>(555) 123-4567</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>support@eliteproperty.com</td>
+                </tr>
+                <tr>
+                    <td>Emergency Line:</td>
+                    <td>(555) 999-0000</td>
+                </tr>
+            </table>
+            <button class="btn secondary" style="margin-top: 24px;">Send Message</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('maintenance-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const priority = document.getElementById('priority').value;
+            const description = document.getElementById('description').value;
+            const accessTime = document.getElementById('access-time').value;
+            const phone = document.getElementById('phone').value;
+            
+            alert('Maintenance request submitted!\n\nPriority: ' + priority + '\n\nYou will receive confirmation via email shortly.\n\nEmergency requests are responded to within 1 hour.');
+            
+            // In production, this would save to maintenance-requests.csv and send notification
+            this.reset();
+        });
+
+        // In production, load tenant-specific data
+        function loadTenantData(tenantName) {
+            console.log('Loading data for tenant:', tenantName);
+        }
+    </script>
+</body>
+</html>
