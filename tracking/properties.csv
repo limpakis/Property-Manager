@@ -1,1 +1,11 @@
 Property_ID,Owner_Name,Owner_Email,Owner_Phone,Address,City,State,Zip,Bedrooms,Bathrooms,Square_Feet,Monthly_Rent,Status,Lease_Start,Lease_End,Tenant_Name,Tenant_Phone,Date_Added,Management_Fee_Percent,Notes
+PROP001,James Anderson,james.anderson@email.com,555-0101,123 Maple Street,Boston,MA,02108,3,2,1500,2800,Active,2025-06-01,2026-05-31,Sarah Johnson,555-0201,2025-04-15,10,Recently renovated kitchen
+PROP002,Maria Garcia,maria.garcia@email.com,555-0102,456 Oak Avenue,Boston,MA,02109,2,1,950,2200,Active,2025-09-01,2026-08-31,Michael Chen,555-0202,2025-03-20,10,Near subway station
+PROP003,Robert Smith,robert.smith@email.com,555-0103,789 Pine Road,Cambridge,MA,02139,4,3,2200,3500,Active,2025-03-15,2026-03-14,Emily Davis,555-0203,2024-12-10,10,Single family home with garage
+PROP004,Lisa Thompson,lisa.thompson@email.com,555-0104,321 Elm Street,Somerville,MA,02143,2,2,1100,2400,Vacant,,,,,2025-08-05,10,Available for showing
+PROP005,David Wilson,david.wilson@email.com,555-0105,654 Birch Lane,Boston,MA,02110,3,2,1400,2600,Active,2024-12-01,2025-11-30,Jessica Martinez,555-0204,2024-10-01,10,Pet-friendly unit
+PROP006,Jennifer Brown,jennifer.brown@email.com,555-0106,987 Cedar Court,Brookline,MA,02445,1,1,750,1900,Active,2025-07-01,2026-06-30,Daniel Kim,555-0205,2025-05-12,10,Studio apartment
+PROP007,Michael Davis,michael.davis@email.com,555-0107,147 Spruce Drive,Cambridge,MA,02138,3,2.5,1650,3100,Active,2025-01-01,2025-12-31,Amanda White,555-0206,2024-11-18,10,Townhouse with parking
+PROP008,Patricia Miller,patricia.miller@email.com,555-0108,258 Walnut Place,Somerville,MA,02144,2,1,1000,2300,Vacant,,,,,2026-01-20,10,Needs minor repairs before showing
+PROP009,Thomas Rodriguez,thomas.rodriguez@email.com,555-0109,432 Harbor View,Boston,MA,02111,4,3.5,2400,4200,Active,2025-10-15,2026-10-14,Christopher Lee,555-0207,2025-08-22,10,Waterfront condo with parking
+PROP010,Rachel Cohen,rachel.cohen@email.com,555-0110,876 Commonwealth Ave,Brookline,MA,02446,2,2,1300,2900,Active,2026-01-01,2026-12-31,Olivia Taylor,555-0208,2025-11-10,10,Recently updated bathrooms

@@ -1,1 +1,10 @@
 Request_ID,Date_Submitted,Property_ID,Address,Tenant_Name,Issue_Description,Category,Priority,Status,Assigned_Vendor,Date_Assigned,Date_Completed,Cost,Owner_Approved,Notes
+MR001,2026-02-10,PROP001,123 Maple Street,Sarah Johnson,Leaking kitchen faucet,Plumbing,Medium,Completed,VEN001,2026-02-10,2026-02-11,185,Yes,Quick turnaround
+MR002,2026-02-08,PROP003,789 Pine Road,Emily Davis,Furnace not heating properly,HVAC,High,Completed,VEN002,2026-02-08,2026-02-09,425,Yes,Emergency repair completed
+MR003,2026-02-12,PROP002,456 Oak Avenue,Michael Chen,Broken window in bedroom,General Maintenance,Medium,In Progress,VEN003,2026-02-13,,,Yes,Window ordered
+MR004,2026-02-14,PROP005,654 Birch Lane,Jessica Martinez,Refrigerator not cooling,Appliance,High,Assigned,VEN004,2026-02-15,,,Yes,Scheduled for tomorrow
+MR005,2026-02-05,PROP007,147 Spruce Drive,Amanda White,Cracked bathroom tile,General Maintenance,Low,Completed,VEN003,2026-02-06,2026-02-07,250,Yes,Cosmetic repair
+MR006,2026-02-15,PROP006,987 Cedar Court,Daniel Kim,Garbage disposal jammed,Plumbing,Medium,Pending,,,,,No,Awaiting owner approval
+MR007,2026-01-28,PROP009,432 Harbor View,Christopher Lee,Dishwasher leaking water,Appliance,High,Completed,VEN004,2026-01-29,2026-01-30,340,Yes,Replaced inlet valve
+MR008,2026-02-16,PROP010,876 Commonwealth Ave,Olivia Taylor,Front door lock sticking,General Maintenance,Low,Assigned,VEN003,2026-02-16,,,Yes,Scheduled for next week
+MR010,2026-02-11,PROP007,147 Spruce Drive,Amanda White,Front door lock sticking,General Maintenance,Low,Completed,VEN003,2026-02-11,2026-02-12,95,Yes,Lock lubricated and adjusted

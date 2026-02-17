@@ -1,1 +1,7 @@
 Vendor_ID,Company_Name,Contact_Name,Phone,Email,Category,Service_Area,Hourly_Rate,Response_Time,Insurance_Verified,License_Number,Rating,Notes
+VEN001,Boston Plumbing Pros,Tom Richards,555-0301,tom@bostonplumbing.com,Plumbing,Greater Boston,125,Same Day,Yes,PL-45782,4.8,Reliable for emergency calls
+VEN002,Climate Control HVAC,Susan Martinez,555-0302,susan@climatecontrol.com,HVAC,Boston Metro,150,24 Hours,Yes,HC-98234,4.9,Excellent service always on time
+VEN003,HandyWorks General Maintenance,Bob Johnson,555-0303,bob@handyworks.com,General Maintenance,All Areas,85,Next Day,Yes,GM-23456,4.5,Good for cosmetic repairs
+VEN004,ApplianceMasters,Karen Lee,555-0304,karen@appliancemasters.com,Appliance,Greater Boston,95,Same Day,Yes,AP-67890,4.7,Specializes in major appliances
+VEN005,Bright Electric Services,David Wong,555-0305,david@brightelectric.com,Electrical,Boston Area,140,Same Day,Yes,EL-12345,4.6,Licensed master electrician
+VEN006,GreenScape Landscaping,Maria Santos,555-0306,maria@greenscape.com,Landscaping,Metro Boston,75,Weekly,Yes,LS-54321,4.4,Seasonal contracts available

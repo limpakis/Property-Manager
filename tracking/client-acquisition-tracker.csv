@@ -1,1 +1,6 @@
 Lead_ID,Date_Contact,Owner_Name,Phone,Email,Property_Address,Source,Status,Follow_Up_Date,Notes,Date_Signed,Properties_Count
+LEAD001,2026-01-15,William Carter,555-0401,william.carter@email.com,245 Highland Ave Somerville MA,Referral,Qualified,2026-02-20,Interested in full management for 2 units,2026-02-05,2
+LEAD002,2026-01-22,Sandra Peterson,555-0402,sandra.peterson@email.com,567 Beacon St Brookline MA,Website,Contacted,2026-02-25,Wants pricing info for 1 condo,,1
+LEAD003,2026-02-01,George Kim,555-0403,george.kim@email.com,789 Massachusetts Ave Cambridge MA,Google Ads,Qualified,2026-03-01,Looking for tenant placement service,,1
+LEAD004,2026-02-08,Elizabeth Moore,555-0404,elizabeth.moore@email.com,321 Washington St Boston MA,Referral,Negotiating,2026-02-22,Reviewing management agreement wants 8% fee,,3
+LEAD005,2026-02-12,Anthony Russo,555-0405,anthony.russo@email.com,654 Brighton Ave Allston MA,Social Media,Contacted,2026-02-28,First-time landlord needs education on process,,1

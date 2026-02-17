@@ -1,0 +1,17 @@
+{
+  "name": "property-manager-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "import-csv": "node scripts/importCSV.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "joi": "^18.0.2",
+    "multer": "^2.0.2",
+    "uuid": "^13.0.0"
+  }
+}
