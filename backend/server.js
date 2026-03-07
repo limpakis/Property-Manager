@@ -26,7 +26,17 @@ const __dirname = dirname(__filename);
 initializeDatabase();
 
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
+
+function ensureStripeConfigured(res) {
+  if (!stripe) {
+    res.status(503).json({
+      error: 'Stripe is not configured. Set STRIPE_SECRET_KEY to enable payment features.'
+    });
+    return false;
+  }
+  return true;
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -1179,6 +1189,8 @@ protectedRouter.get('/clients', (req, res) => {
 
 protectedRouter.post('/payments/create-checkout-session', validate(paymentSchema), async (req, res) => {
   try {
+    if (!ensureStripeConfigured(res)) return;
+
     const { tenantId, propertyId, amount, type, description } = req.body;
     const db = getDb();
     
@@ -1276,6 +1288,8 @@ protectedRouter.get('/payments', (req, res) => {
 
 protectedRouter.post('/payments/create-payment-link', validate(paymentSchema), async (req, res) => {
   try {
+    if (!ensureStripeConfigured(res)) return;
+
     const { tenantId, propertyId, amount, type, description } = req.body;
     const db = getDb();
     
@@ -1352,6 +1366,8 @@ app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), asy
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
   try {
+    if (!ensureStripeConfigured(res)) return;
+
     let event;
     if (webhookSecret && sig) {
       event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
