@@ -1,0 +1,79 @@
+{
+  "Property_Type": "Multi-Unit",
+  "Address": "123 Maple Street",
+  "City": "Boston",
+  "State": "MA",
+  "Zip": "02101",
+  "Bedrooms": "0",
+  "Bathrooms": "0",
+  "Square_Feet": "0",
+  "Monthly_Rent": "0",
+  "Status": "Active",
+  "Owner_Name": "John Smith",
+  "Owner_Email": "john.smith@email.com",
+  "Owner_Phone": "(555) 123-4567",
+  "Management_Fee_Percent": "10",
+  "Notes": "Historic building with modern renovations",
+  "Units": [
+    {
+      "Unit_Number": "101",
+      "Bedrooms": "2",
+      "Bathrooms": "1",
+      "Square_Feet": "850",
+      "Monthly_Rent": "1800",
+      "Status": "Occupied",
+      "Tenant_Name": "Sarah Johnson",
+      "Tenant_Phone": "(555) 234-5678",
+      "Lease_Start": "2025-01-01",
+      "Lease_End": "2025-12-31"
+    },
+    {
+      "Unit_Number": "102",
+      "Bedrooms": "1",
+      "Bathrooms": "1",
+      "Square_Feet": "650",
+      "Monthly_Rent": "1400",
+      "Status": "Occupied",
+      "Tenant_Name": "Michael Chen",
+      "Tenant_Phone": "(555) 345-6789",
+      "Lease_Start": "2025-06-01",
+      "Lease_End": "2026-05-31"
+    },
+    {
+      "Unit_Number": "201",
+      "Bedrooms": "2",
+      "Bathrooms": "2",
+      "Square_Feet": "950",
+      "Monthly_Rent": "2100",
+      "Status": "Occupied",
+      "Tenant_Name": "Emily Davis",
+      "Tenant_Phone": "(555) 456-7890",
+      "Lease_Start": "2024-09-01",
+      "Lease_End": "2026-08-31"
+    },
+    {
+      "Unit_Number": "202",
+      "Bedrooms": "1",
+      "Bathrooms": "1",
+      "Square_Feet": "700",
+      "Monthly_Rent": "1500",
+      "Status": "Vacant",
+      "Tenant_Name": "",
+      "Tenant_Phone": "",
+      "Lease_Start": "",
+      "Lease_End": ""
+    },
+    {
+      "Unit_Number": "301",
+      "Bedrooms": "3",
+      "Bathrooms": "2",
+      "Square_Feet": "1200",
+      "Monthly_Rent": "2600",
+      "Status": "Active",
+      "Tenant_Name": "Robert Martinez",
+      "Tenant_Phone": "(555) 567-8901",
+      "Lease_Start": "2025-03-01",
+      "Lease_End": "2026-02-28"
+    }
+  ]
+}

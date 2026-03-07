@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PropManager - Παρουσίαση</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0f172a;
+    color: #f8fafc;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    padding: 60px 80px;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide.active { display: flex; }
+
+  /* Slide counter */
+  .slide-counter {
+    position: fixed;
+    bottom: 30px;
+    right: 40px;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+    z-index: 100;
+  }
+
+  /* Navigation */
+  .nav-hint {
+    position: fixed;
+    bottom: 30px;
+    left: 40px;
+    font-size: 13px;
+    color: #475569;
+    z-index: 100;
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f97316, #fb923c);
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* ====== SLIDE 1: Title ====== */
+  .slide-1 {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    text-align: center;
+    align-items: center;
+  }
+  .slide-1::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%;
+  }
+  .slide-1::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
+    bottom: -50px; left: -50px;
+    border-radius: 50%;
+  }
+  .slide-1 .logo {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 800; color: white;
+    margin-bottom: 40px;
+    box-shadow: 0 20px 60px rgba(249,115,22,0.3);
+  }
+  .slide-1 h1 {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .slide-1 h1 span { color: #f97316; }
+  .slide-1 p {
+    font-size: 22px;
+    color: #94a3b8;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  .slide-1 .tagline {
+    margin-top: 40px;
+    display: inline-flex;
+    padding: 10px 24px;
+    border: 1px solid #334155;
+    border-radius: 100px;
+    font-size: 14px;
+    color: #cbd5e1;
+    background: rgba(51,65,85,0.3);
+  }
+
+  /* ====== SLIDE 2: Problem ====== */
+  .slide-2 {
+    background: linear-gradient(135deg, #0f172a, #1a1a2e);
+  }
+  .slide-2 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #ef4444;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-2 h2 {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 50px;
+    line-height: 1.2;
+  }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+  .problem-card {
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.15);
+    border-radius: 16px;
+    padding: 32px;
+    transition: transform 0.3s;
+  }
+  .problem-card:hover { transform: translateY(-4px); }
+  .problem-card .icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+  .problem-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fca5a5;
+  }
+  .problem-card p {
+    font-size: 15px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* ====== SLIDE 3: Stats ====== */
+  .slide-3 {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    align-items: center;
+    text-align: center;
+  }
+  .slide-3 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #f97316;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-3 h2 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 60px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 900px;
+  }
+  .stat-item .number {
+    font-size: 56px;
+    font-weight: 900;
+    color: #f97316;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-item .desc {
+    font-size: 16px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* ====== SLIDE 4: Solution ====== */
+  .slide-4 {
+    background: linear-gradient(135deg, #0f172a, #0c1a0f);
+  }
+  .slide-4 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #22c55e;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-4 h2 {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 50px;
+    line-height: 1.2;
+  }
+  .solution-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .solution-card {
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .solution-card .icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 50px; height: 50px;
+    background: rgba(34,197,94,0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solution-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #86efac;
+  }
+  .solution-card p {
+    font-size: 14px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* ====== SLIDE 5: Features ====== */
+  .slide-5 {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+  }
+  .slide-5 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #f97316;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-5 h2 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 50px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .feature-item {
+    background: rgba(249,115,22,0.04);
+    border: 1px solid rgba(249,115,22,0.1);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .feature-item .icon { font-size: 28px; margin-bottom: 12px; }
+  .feature-item h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .feature-item p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* ====== SLIDE 6: Architecture ====== */
+  .slide-6 {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    align-items: center;
+  }
+  .slide-6 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #818cf8;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-6 h2 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 50px;
+    text-align: center;
+  }
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .arch-box {
+    background: rgba(129,140,248,0.08);
+    border: 1px solid rgba(129,140,248,0.2);
+    border-radius: 16px;
+    padding: 28px 32px;
+    text-align: center;
+    min-width: 180px;
+  }
+  .arch-box .icon { font-size: 32px; margin-bottom: 10px; }
+  .arch-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .arch-box p { font-size: 13px; color: #94a3b8; }
+  .arch-arrow {
+    font-size: 28px;
+    color: #4f46e5;
+  }
+  .tech-tags {
+    display: flex;
+    gap: 12px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tech-tag {
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(129,140,248,0.1);
+    border: 1px solid rgba(129,140,248,0.2);
+    color: #a5b4fc;
+  }
+
+  /* ====== SLIDE 7: Pricing ====== */
+  .slide-7 {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    align-items: center;
+    text-align: center;
+  }
+  .slide-7 .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #f97316;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .slide-7 h2 {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 50px;
+  }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 900px;
+  }
+  .pricing-card {
+    background: rgba(30,41,59,0.8);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 36px 28px;
+    text-align: center;
+    position: relative;
+  }
+  .pricing-card.featured {
+    border-color: #f97316;
+    background: rgba(249,115,22,0.06);
+    transform: scale(1.05);
+  }
+  .pricing-card.featured::before {
+    content: 'ΔΗΜΟΦΙΛΕΣ';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 100px;
+    letter-spacing: 1px;
+  }
+  .pricing-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .pricing-card .price {
+    font-size: 42px;
+    font-weight: 900;
+    color: #f97316;
+    margin-bottom: 4px;
+  }
+  .pricing-card .price span { font-size: 16px; color: #94a3b8; font-weight: 400; }
+  .pricing-card .limit {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+  .pricing-card ul {
+    list-style: none;
+    text-align: left;
+  }
+  .pricing-card li {
+    font-size: 13px;
+    color: #cbd5e1;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pricing-card li::before {
+    content: '✓';
+    color: #22c55e;
+    font-weight: 700;
+  }
+
+  /* ====== SLIDE 8: CTA ====== */
+  .slide-8 {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    text-align: center;
+    align-items: center;
+  }
+  .slide-8::before {
+    content: '';
+    position: absolute;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+  }
+  .slide-8 h2 {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    position: relative;
+  }
+  .slide-8 p {
+    font-size: 20px;
+    color: #94a3b8;
+    max-width: 550px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .cta-button {
+    display: inline-flex;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 12px;
+    text-decoration: none;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(249,115,22,0.3);
+    transition: transform 0.2s;
+  }
+  .cta-button:hover { transform: translateY(-2px); }
+  .contact-info {
+    margin-top: 40px;
+    font-size: 15px;
+    color: #64748b;
+    position: relative;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active > * {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+  .slide.active > *:nth-child(2) { animation-delay: 0.1s; }
+  .slide.active > *:nth-child(3) { animation-delay: 0.2s; }
+  .slide.active > *:nth-child(4) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="nav-hint">← → ή κλικ για πλοήγηση</div>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-1 active" id="slide-1">
+  <div class="logo">P</div>
+  <h1>Prop<span>Manager</span></h1>
+  <p>Η πλατφόρμα διαχείρισης ακινήτων που βάζει τέλος στο χάος των spreadsheets και του χαρτοπόλεμου</p>
+  <div class="tagline">SaaS Platform · Multi-Tenant · Stripe Payments</div>
+</div>
+
+<!-- SLIDE 2: Problem -->
+<div class="slide slide-2" id="slide-2">
+  <div class="label">🔴 Το Πρόβλημα</div>
+  <h2>Οι ιδιοκτήτες ακινήτων χάνουν χρόνο, χρήμα & έλεγχο</h2>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="icon">💸</div>
+      <h3>Καθυστερημένα ενοίκια</h3>
+      <p>Το 35% των μικρών ιδιοκτητών αντιμετωπίζει καθυστερήσεις πληρωμών κάθε μήνα. Κυνηγούν τους ενοικιαστές με SMS και τηλέφωνα.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">📊</div>
+      <h3>Μηδενική ορατότητα</h3>
+      <p>Excel, χειρόγραφα, αποδείξεις σε κουτιά. Κανείς δεν ξέρει αν βγαίνει κερδοφόρος μέχρι να κάτσει με τον λογιστή.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔥</div>
+      <h3>Χαμένες εκπτώσεις φόρων</h3>
+      <p>Ασφάλειες, επισκευές, φόροι ακινήτων — χιλιάδες ευρώ σε εκπτώσεις χάνονται γιατί κανείς δεν τα παρακολουθεί σωστά.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Market Stats -->
+<div class="slide slide-3" id="slide-3">
+  <div class="label">📈 Η Αγορά</div>
+  <h2>Γιατί τώρα είναι η σωστή στιγμή</h2>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="number">72%</div>
+      <div class="desc">των μικρών ιδιοκτητών<br>χρησιμοποιούν ακόμα<br>Excel ή χαρτί</div>
+    </div>
+    <div class="stat-item">
+      <div class="number">$22B</div>
+      <div class="desc">η αγορά Property<br>Management Software<br>παγκοσμίως (2025)</div>
+    </div>
+    <div class="stat-item">
+      <div class="number">8.5%</div>
+      <div class="desc">ετήσια ανάπτυξη<br>CAGR μέχρι<br>το 2030</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Solution -->
+<div class="slide slide-4" id="slide-4">
+  <div class="label">✅ Η Λύση</div>
+  <h2>Μία πλατφόρμα για τα πάντα</h2>
+  <div class="solution-grid">
+    <div class="solution-card">
+      <div class="icon">🏠</div>
+      <div>
+        <h3>Διαχείριση Ακινήτων</h3>
+        <p>Όλα τα ακίνητα σε ένα dashboard. Single & multi-unit, ενοικιαστές, μισθώσεις, κατάσταση — τα πάντα οργανωμένα.</p>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="icon">💳</div>
+      <div>
+        <h3>Online Πληρωμές</h3>
+        <p>Ο ενοικιαστής πληρώνει online μέσω Stripe. Αυτόματη καταγραφή, payment links, checkout — χωρίς κυνήγι.</p>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📑</div>
+      <div>
+        <h3>Έξοδα & Φορολογία</h3>
+        <p>Καταγραφή κάθε εξόδου, αυτόματα tax-deductible flags, Schedule E export — ο λογιστής σας θα σας ευχαριστεί.</p>
+      </div>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📊</div>
+      <div>
+        <h3>Αναφορές & Rent Roll</h3>
+        <p>Ποιος χρωστάει, ποιος πλήρωσε, cash flow trends, revenue by property — real-time data, όχι υποθέσεις.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Features -->
+<div class="slide slide-5" id="slide-5">
+  <div class="label">⚙️ Χαρακτηριστικά</div>
+  <h2>Τι περιλαμβάνει η πλατφόρμα</h2>
+  <div class="features-grid">
+    <div class="feature-item">
+      <div class="icon">🔐</div>
+      <h3>Authentication</h3>
+      <p>JWT auth, role-based access (admin/manager/viewer), team management</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">🏢</div>
+      <h3>Multi-Tenant</h3>
+      <p>Κάθε εταιρεία βλέπει μόνο τα δικά της δεδομένα. Πλήρης data isolation.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">💰</div>
+      <h3>Stripe Billing</h3>
+      <p>Subscription tiers, 14-day trial, billing portal, webhooks — αυτόματη χρέωση.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">🔧</div>
+      <h3>Maintenance</h3>
+      <p>Αιτήματα συντήρησης, ανάθεση σε vendors, κόστη, προτεραιότητες.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">📋</div>
+      <h3>Rent Roll</h3>
+      <p>Μηνιαίο ledger — τι οφείλεται, τι πληρώθηκε, late fees, αυτόματη δημιουργία.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">📄</div>
+      <h3>Documents</h3>
+      <p>Upload & αποθήκευση συμβολαίων, αποδείξεων, εγγράφων ανά account.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">📈</div>
+      <h3>Financial Reports</h3>
+      <p>Cash flow, expense breakdown, revenue charts, tax summary, CSV export.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">🔔</div>
+      <h3>Notifications</h3>
+      <p>Lease expirations, open maintenance, payment alerts — τίποτα δεν ξεχνιέται.</p>
+    </div>
+    <div class="feature-item">
+      <div class="icon">🧮</div>
+      <h3>ROI Calculator</h3>
+      <p>Public εργαλείο για lead generation — calculates ROI + email capture.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Tech Stack -->
+<div class="slide slide-6" id="slide-6">
+  <div class="label">🛠 Αρχιτεκτονική</div>
+  <h2>Σύγχρονο Tech Stack</h2>
+  <div class="arch-flow">
+    <div class="arch-box">
+      <div class="icon">🖥️</div>
+      <h3>Frontend</h3>
+      <p>React + TypeScript<br>Vite · Tailwind CSS</p>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">⚡</div>
+      <h3>API</h3>
+      <p>Node.js + Express<br>JWT · REST API</p>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">🗄️</div>
+      <h3>Database</h3>
+      <p>SQLite (WAL)<br>12 Tables · Indexes</p>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-box">
+      <div class="icon">💳</div>
+      <h3>Payments</h3>
+      <p>Stripe API<br>Checkout · Webhooks</p>
+    </div>
+  </div>
+  <div class="tech-tags">
+    <span class="tech-tag">React 18</span>
+    <span class="tech-tag">TypeScript</span>
+    <span class="tech-tag">Vite</span>
+    <span class="tech-tag">Tailwind CSS</span>
+    <span class="tech-tag">shadcn/ui</span>
+    <span class="tech-tag">Node.js</span>
+    <span class="tech-tag">Express</span>
+    <span class="tech-tag">SQLite</span>
+    <span class="tech-tag">Stripe</span>
+    <span class="tech-tag">JWT</span>
+    <span class="tech-tag">Recharts</span>
+  </div>
+</div>
+
+<!-- SLIDE 7: Pricing -->
+<div class="slide slide-7" id="slide-7">
+  <div class="label">💎 Τιμολόγηση</div>
+  <h2>Revenue Model (SaaS)</h2>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Starter</h3>
+      <div class="price">$49<span>/μήνα</span></div>
+      <div class="limit">Έως 10 ακίνητα · 2 χρήστες</div>
+      <ul>
+        <li>Διαχείριση ακινήτων</li>
+        <li>Online πληρωμές</li>
+        <li>Maintenance tracking</li>
+        <li>Documents</li>
+        <li>Basic reports</li>
+      </ul>
+    </div>
+    <div class="pricing-card featured">
+      <h3>Professional</h3>
+      <div class="price">$99<span>/μήνα</span></div>
+      <div class="limit">Έως 50 ακίνητα · 10 χρήστες</div>
+      <ul>
+        <li>Όλα τα Starter +</li>
+        <li>API access</li>
+        <li>Priority support</li>
+        <li>Advanced reports</li>
+        <li>Tax export</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <h3>Enterprise</h3>
+      <div class="price">$299<span>/μήνα</span></div>
+      <div class="limit">Απεριόριστα ακίνητα & χρήστες</div>
+      <ul>
+        <li>Όλα τα Professional +</li>
+        <li>White-label</li>
+        <li>Custom domain</li>
+        <li>Dedicated support</li>
+        <li>SLA guarantee</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: CTA -->
+<div class="slide slide-8" id="slide-8">
+  <h2>Έτοιμο να αλλάξει τον τρόπο<br>που διαχειρίζεστε ακίνητα</h2>
+  <p>14 ημέρες δωρεάν δοκιμή. Χωρίς πιστωτική κάρτα. Setup σε 2 λεπτά.</p>
+  <a href="#" class="cta-button">Ξεκινήστε Δωρεάν →</a>
+  <div class="contact-info">
+    PropManager · Built with ❤️ in Greece
+  </div>
+</div>
+
+<script>
+  let current = 1;
+  const total = 8;
+
+  function updateSlide() {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById('slide-' + current).classList.add('active');
+    document.getElementById('counter').textContent = current + ' / ' + total;
+    document.getElementById('progress').style.width = (current / total * 100) + '%';
+  }
+
+  function next() { if (current < total) { current++; updateSlide(); } }
+  function prev() { if (current > 1) { current--; updateSlide(); } }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+    if (e.clientX > window.innerWidth / 2) next(); else prev();
+  });
+
+  updateSlide();
+</script>
+
+</body>
+</html>

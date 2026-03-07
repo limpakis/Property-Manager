@@ -1,10 +1,22 @@
 # Node
 node_modules/
 .env
-.env.*
+.env.local
+.env.*.local
+# Keep .env.example files committed (they document required variables)
+!.env.example
 dist/
 build/
 .vite/
+
+# Database files (never commit these - Railway provides a volume)
+*.db
+*.db-shm
+*.db-wal
+
+# Package lock files (optional - uncomment if you prefer not to commit these)
+# package-lock.json
+# bun.lockb
 
 # Logs
 npm-debug.log*
