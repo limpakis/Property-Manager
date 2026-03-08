@@ -41,6 +41,20 @@ function ensureStripeConfigured(res) {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+function normalizeOrigin(origin) {
+  const value = String(origin || '').trim().replace(/\/+$/, '');
+  if (!value) return '';
+  if (value === '*') return '*';
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (value.startsWith('localhost') || value.startsWith('127.0.0.1')) return `http://${value}`;
+  return `https://${value}`;
+}
+
+const allowedOrigins = (process.env.CORS_ORIGIN || '*')
+  .split(',')
+  .map(normalizeOrigin)
+  .filter(Boolean);
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -72,7 +86,17 @@ const upload = multer({
 
 // ============ MIDDLEWARE ============
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*')) return callback(null, true);
+
+    const requestOrigin = normalizeOrigin(origin);
+    if (allowedOrigins.includes(requestOrigin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
