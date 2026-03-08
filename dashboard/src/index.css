@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 220 14% 92%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 25 95% 53%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 207 18% 52%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 207 18% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 207 14% 42%;
+    --sidebar-ring: 25 95% 53%;
+    --sidebar-muted: 207 12% 80%;
+
+    --chart-1: 25 95% 53%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 0 84% 60%;
+    --chart-5: 262 83% 58%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 220 20% 95%;
+    --card: 222 47% 9%;
+    --card-foreground: 220 20% 95%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 40% 16%;
+    --secondary-foreground: 220 20% 95%;
+    --muted: 222 40% 16%;
+    --muted-foreground: 220 9% 55%;
+    --accent: 222 40% 20%;
+    --accent-foreground: 220 20% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 40% 18%;
+    --input: 222 40% 18%;
+    --ring: 25 95% 53%;
+    --sidebar-background: 207 18% 44%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 207 18% 37%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 207 14% 34%;
+    --sidebar-ring: 25 95% 53%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', 'DM Sans', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(25 95% 53%), hsl(32 95% 58%));
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, hsl(142 71% 45%), hsl(160 70% 42%));
+  }
+
+  .gradient-blue {
+    background: linear-gradient(135deg, hsl(217 91% 60%), hsl(235 80% 65%));
+  }
+
+  .gradient-purple {
+    background: linear-gradient(135deg, hsl(262 83% 58%), hsl(280 80% 62%));
+  }
+
+  .gradient-card {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(220 20% 99%));
+  }
+
+  .gradient-mesh {
+    background: radial-gradient(at 40% 20%, hsl(25 95% 53% / 0.08) 0, transparent 50%),
+                radial-gradient(at 80% 0%, hsl(217 91% 60% / 0.06) 0, transparent 50%),
+                radial-gradient(at 0% 50%, hsl(142 71% 45% / 0.06) 0, transparent 50%),
+                hsl(var(--background));
+  }
+
+  .glass-card {
+    background: hsl(var(--card) / 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .shadow-card {
+    box-shadow: 0 1px 3px 0 hsl(220 20% 10% / 0.06), 0 1px 2px -1px hsl(220 20% 10% / 0.06);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 10px 25px -5px hsl(220 20% 10% / 0.08), 0 8px 10px -6px hsl(220 20% 10% / 0.04);
+  }
+
+  .shadow-glow-primary {
+    box-shadow: 0 0 20px hsl(25 95% 53% / 0.25), 0 4px 16px hsl(25 95% 53% / 0.15);
+  }
+
+  .shadow-glow-success {
+    box-shadow: 0 0 20px hsl(142 71% 45% / 0.25), 0 4px 16px hsl(142 71% 45% / 0.15);
+  }
+
+  .card-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 30%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, hsl(0 0% 100% / 0.08), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+  }
+
+  .card-shine:hover::after {
+    left: 130%;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out both;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out both;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 25%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  .animate-count-up {
+    animation: countUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+  .stagger-5 { animation-delay: 0.25s; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px hsl(25 95% 53% / 0.3); }
+  50% { box-shadow: 0 0 24px hsl(25 95% 53% / 0.6), 0 0 40px hsl(25 95% 53% / 0.2); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ROI Calculator Slider Styles */
+.roi-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+}
+
+.roi-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(25 95% 53%), hsl(25 95% 48%));
+  box-shadow: 0 2px 8px hsl(25 95% 53% / 0.4), 0 0 0 3px white;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.roi-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 12px hsl(25 95% 53% / 0.5), 0 0 0 3px white;
+}
+
+.roi-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(25 95% 53%), hsl(25 95% 48%));
+  box-shadow: 0 2px 8px hsl(25 95% 53% / 0.4), 0 0 0 3px white;
+  cursor: pointer;
+  border: none;
+}
+
+.roi-range::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: transparent;
+}

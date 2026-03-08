@@ -1,0 +1,31 @@
+TrueNorth PM brand assets drop zone
+
+Put all Canva exports in this same folder:
+
+dashboard/public/branding/
+
+Required files (exact names):
+
+1) logo-primary.svg
+2) logo-horizontal.svg
+3) logo-stacked.svg
+4) logo-icon.svg
+5) logo-primary-dark.svg
+6) logo-primary-light.svg
+7) logo-monochrome-black.svg
+8) logo-monochrome-white.svg
+9) favicon-16.png
+10) favicon-32.png
+11) apple-touch-icon-180.png
+12) icon-512.png
+13) social-preview-1200x630.png
+
+Optional:
+14) hero-illustration-1920x1080.png
+15) brand-pattern.png
+
+After you add them, tell me "assets uploaded" and I will integrate them into:
+- app sidebar/header logo
+- login/register branding
+- favicon + index.html metadata
+- social preview image tags
