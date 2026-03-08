@@ -1532,6 +1532,49 @@ app.post('/api/tenant-portal/:token/request', express.json(), (req, res) => {
   }
 });
 
+// Tenant portal: generate Stripe payment link (public - validated by token)
+app.post('/api/tenant-portal/:token/pay', express.json(), async (req, res) => {
+  try {
+    const db = getDb();
+    const tenant = db.prepare(`
+      SELECT t.tenant_id, t.tenant_name, t.property_id, t.monthly_rent, t.account_id,
+             p.address
+      FROM tenants t LEFT JOIN properties p ON t.property_id = p.property_id
+      WHERE t.portal_token = ?
+    `).get(req.params.token);
+    if (!tenant) return res.status(404).json({ error: 'Invalid portal link' });
+
+    const amount = req.body.amount || tenant.monthly_rent;
+    if (!amount || amount <= 0) return res.status(400).json({ error: 'No rent amount set for this tenant' });
+
+    if (!stripe) return res.status(503).json({ error: 'Payments not configured' });
+
+    const paymentLink = await stripe.paymentLinks.create({
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Rent Payment',
+            description: `Monthly rent${tenant.address ? ' — ' + tenant.address : ''}`,
+          },
+          unit_amount: Math.round(amount * 100),
+        },
+        quantity: 1,
+      }],
+      metadata: {
+        tenantId: tenant.tenant_id,
+        propertyId: tenant.property_id || '',
+        type: 'rent',
+        accountId: tenant.account_id,
+      },
+    });
+
+    res.json({ url: paymentLink.url });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get portal token for a tenant (protected)
 protectedRouter.get('/tenants/:id/portal-link', (req, res) => {
   try {
