@@ -1501,8 +1501,32 @@ app.get('/api/tenant-portal/:token', (req, res) => {
 protectedRouter.get('/tenants/:id/portal-link', (req, res) => {
   try {
     const db = getDb();
-    const tenant = db.prepare('SELECT portal_token FROM tenants WHERE tenant_id = ? AND account_id = ?').get(req.params.id, req.accountId);
-    if (!tenant) return res.status(404).json({ error: 'Tenant not found' });
+    let tenant = db.prepare('SELECT tenant_id, portal_token FROM tenants WHERE tenant_id = ? AND account_id = ?').get(req.params.id, req.accountId);
+
+    // If not found in tenants table, the ID might be a property_id (legacy/property-sourced tenant)
+    if (!tenant) {
+      const prop = db.prepare('SELECT * FROM properties WHERE property_id = ? AND account_id = ?').get(req.params.id, req.accountId);
+      if (!prop || !prop.tenant_name) return res.status(404).json({ error: 'Tenant not found' });
+
+      // Auto-migrate this property tenant into the tenants table
+      const newTenantId = req.params.id; // reuse property_id as tenant_id for consistency
+      const portalToken = uuidv4();
+      db.prepare(`
+        INSERT OR IGNORE INTO tenants
+          (tenant_id, account_id, property_id, tenant_name, email, phone, lease_start, lease_end, monthly_rent, status, portal_token)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(newTenantId, req.accountId, prop.property_id, prop.tenant_name, prop.owner_email || null, prop.tenant_phone || null, prop.lease_start || null, prop.lease_end || null, prop.monthly_rent || null, prop.status || 'Active', portalToken);
+
+      tenant = db.prepare('SELECT tenant_id, portal_token FROM tenants WHERE tenant_id = ?').get(newTenantId);
+    }
+
+    // If token is missing (old record), assign one now
+    if (!tenant.portal_token) {
+      const portalToken = uuidv4();
+      db.prepare('UPDATE tenants SET portal_token = ? WHERE tenant_id = ?').run(portalToken, tenant.tenant_id);
+      tenant.portal_token = portalToken;
+    }
+
     const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.json({ url: `${baseUrl}/tenant-portal/${tenant.portal_token}` });
   } catch (error) {
