@@ -2,7 +2,7 @@
 import jwt from 'jsonwebtoken';
 import { getDb } from '../database/schema.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'propmanager-saas-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'truenorthpm-saas-secret-change-in-production';
 const JWT_EXPIRY = '7d';
 
 export function generateToken(user) {

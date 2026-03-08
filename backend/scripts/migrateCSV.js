@@ -82,7 +82,7 @@ async function migrate() {
   
   // Create default account
   const accountId = process.argv[2] || `ACC${uuidv4().split('-')[0].toUpperCase()}`;
-  const companyName = process.argv[3] || 'My Property Management';
+  const companyName = process.argv[3] || 'TrueNorth PM';
   
   // Check if account exists
   const existingAccount = db.prepare('SELECT account_id FROM accounts WHERE account_id = ?').get(accountId);
@@ -105,10 +105,10 @@ async function migrate() {
     
     db.prepare(`
       INSERT INTO users (user_id, account_id, email, password_hash, full_name, role, is_account_owner)
-      VALUES (?, ?, 'admin@propmanager.com', ?, 'Admin User', 'admin', 1)
+      VALUES (?, ?, 'admin@truenorthpm.com', ?, 'Admin User', 'admin', 1)
     `).run(userId, accountId, passwordHash);
     
-    console.log(`✅ Created admin user: admin@propmanager.com / admin123`);
+    console.log(`✅ Created admin user: admin@truenorthpm.com / admin123`);
   } else {
     console.log(`📌 Using existing account: ${accountId}`);
   }
@@ -277,7 +277,7 @@ async function migrate() {
   console.log('========================================');
   console.log(`\nAccount ID: ${accountId}`);
   console.log(`Company: ${companyName}`);
-  console.log(`Default login: admin@propmanager.com / admin123`);
+  console.log(`Default login: admin@truenorthpm.com / admin123`);
   console.log('\nMigration summary:');
   console.log(`  Properties: ${propCount}`);
   console.log(`  Maintenance Requests: ${mrCount}`);

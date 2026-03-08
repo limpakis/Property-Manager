@@ -1073,14 +1073,14 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    message: 'Property Manager API is running'
+    message: 'TrueNorth PM API is running'
   });
 });
 
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    name: 'Property Manager API',
+    name: 'TrueNorth PM API',
     version: '2.0.0',
     description: 'Full CRUD API for Property Management',
     endpoints: {
@@ -1132,7 +1132,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Property Manager Backend v2.0.0 running on http://localhost:${PORT}`);
+  console.log(`\n🚀 TrueNorth PM Backend v2.0.0 running on http://localhost:${PORT}`);
   console.log(`📊 API Health Check: http://localhost:${PORT}/health`);
   console.log(`📖 API Documentation: http://localhost:${PORT}`);
   console.log(`\n✨ Features:`);

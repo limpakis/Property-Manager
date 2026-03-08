@@ -82,7 +82,7 @@ router.post('/create-checkout', authenticate, authorize('admin'), async (req, re
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `PropManager ${tierInfo.name} Plan`,
+            name: `TrueNorth PM ${tierInfo.name} Plan`,
             description: `${billing_period === 'annual' ? 'Annual' : 'Monthly'} subscription - ${tierInfo.property_limit === -1 ? 'Unlimited' : tierInfo.property_limit} properties`,
           },
           unit_amount: price,

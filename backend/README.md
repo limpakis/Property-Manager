@@ -1,6 +1,6 @@
-# PropManager — Backend
+# TrueNorth PM — Backend
 
-Node.js + Express REST API for the PropManager SaaS platform.
+Node.js + Express REST API for the TrueNorth PM SaaS platform.
 
 ## Tech
 

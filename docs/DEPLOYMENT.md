@@ -57,15 +57,15 @@ git push
 | `VITE_API_URL` | `https://your-app.up.railway.app/api` (your Railway URL + `/api`) |
 
 5. Click **Deploy**
-6. Vercel gives you a URL like: `https://propmanager.vercel.app`
+6. Vercel gives you a URL like: `https://truenorthpm.vercel.app`
 
 ---
 
 ## Step 4 — Update Railway with your Vercel URL
 
 Go back to Railway → Variables and set:
-- `FRONTEND_URL` = `https://propmanager.vercel.app`
-- `CORS_ORIGIN` = `https://propmanager.vercel.app`
+- `FRONTEND_URL` = `https://truenorthpm.vercel.app`
+- `CORS_ORIGIN` = `https://truenorthpm.vercel.app`
 
 Railway will automatically redeploy.
 

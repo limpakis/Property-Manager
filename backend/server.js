@@ -1,4 +1,4 @@
-// PropManager SaaS - Multi-Tenant Backend Server
+// TrueNorth PM SaaS - Multi-Tenant Backend Server
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
@@ -1360,6 +1360,127 @@ protectedRouter.get('/payments/stats', (req, res) => {
   }
 });
 
+// ─── Tenants CRUD ────────────────────────────────────────────────────────────
+
+protectedRouter.get('/tenants', (req, res) => {
+  try {
+    const db = getDb();
+    const tenants = db.prepare(`
+      SELECT t.*, p.address, p.city, p.state
+      FROM tenants t
+      LEFT JOIN properties p ON t.property_id = p.property_id
+      WHERE t.account_id = ?
+      ORDER BY t.created_at DESC
+    `).all(req.accountId);
+    res.json(tenants);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+protectedRouter.get('/tenants/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const tenant = db.prepare(`
+      SELECT t.*, p.address, p.city, p.state, p.monthly_rent
+      FROM tenants t
+      LEFT JOIN properties p ON t.property_id = p.property_id
+      WHERE t.tenant_id = ? AND t.account_id = ?
+    `).get(req.params.id, req.accountId);
+    if (!tenant) return res.status(404).json({ error: 'Tenant not found' });
+    res.json(tenant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+protectedRouter.post('/tenants', (req, res) => {
+  try {
+    const db = getDb();
+    const { tenant_name, email, phone, property_id, lease_start, lease_end, monthly_rent, security_deposit, status, notes } = req.body;
+    if (!tenant_name) return res.status(400).json({ error: 'tenant_name is required' });
+    const tenantId = uuidv4();
+    const portalToken = uuidv4();
+    db.prepare(`
+      INSERT INTO tenants (tenant_id, account_id, property_id, tenant_name, email, phone, lease_start, lease_end, monthly_rent, security_deposit, status, notes, portal_token)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(tenantId, req.accountId, property_id || null, tenant_name, email || null, phone || null, lease_start || null, lease_end || null, monthly_rent || null, security_deposit || null, status || 'Active', notes || null, portalToken);
+    // Also update property's tenant info
+    if (property_id) {
+      db.prepare(`UPDATE properties SET tenant_name = ?, tenant_phone = ?, lease_start = ?, lease_end = ?, monthly_rent = COALESCE(?, monthly_rent) WHERE property_id = ? AND account_id = ?`)
+        .run(tenant_name, phone || null, lease_start || null, lease_end || null, monthly_rent || null, property_id, req.accountId);
+    }
+    const tenant = db.prepare('SELECT * FROM tenants WHERE tenant_id = ?').get(tenantId);
+    res.status(201).json(tenant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+protectedRouter.put('/tenants/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const existing = db.prepare('SELECT * FROM tenants WHERE tenant_id = ? AND account_id = ?').get(req.params.id, req.accountId);
+    if (!existing) return res.status(404).json({ error: 'Tenant not found' });
+    const { tenant_name, email, phone, property_id, lease_start, lease_end, monthly_rent, security_deposit, status, notes } = req.body;
+    db.prepare(`
+      UPDATE tenants SET tenant_name = ?, email = ?, phone = ?, property_id = ?, lease_start = ?, lease_end = ?, monthly_rent = ?, security_deposit = ?, status = ?, notes = ?
+      WHERE tenant_id = ? AND account_id = ?
+    `).run(tenant_name || existing.tenant_name, email || existing.email, phone || existing.phone, property_id || existing.property_id, lease_start || existing.lease_start, lease_end || existing.lease_end, monthly_rent || existing.monthly_rent, security_deposit || existing.security_deposit, status || existing.status, notes || existing.notes, req.params.id, req.accountId);
+    const tenant = db.prepare('SELECT * FROM tenants WHERE tenant_id = ?').get(req.params.id);
+    res.json(tenant);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+protectedRouter.delete('/tenants/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const existing = db.prepare('SELECT * FROM tenants WHERE tenant_id = ? AND account_id = ?').get(req.params.id, req.accountId);
+    if (!existing) return res.status(404).json({ error: 'Tenant not found' });
+    db.prepare('DELETE FROM tenants WHERE tenant_id = ? AND account_id = ?').run(req.params.id, req.accountId);
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Tenant portal token lookup (public - no auth needed)
+app.get('/api/tenant-portal/:token', (req, res) => {
+  try {
+    const db = getDb();
+    const tenant = db.prepare(`
+      SELECT t.tenant_id, t.tenant_name, t.email, t.phone, t.lease_start, t.lease_end, t.monthly_rent, t.security_deposit, t.status, t.notes,
+             p.address, p.city, p.state, p.monthly_rent as property_rent
+      FROM tenants t
+      LEFT JOIN properties p ON t.property_id = p.property_id
+      WHERE t.portal_token = ?
+    `).get(req.params.token);
+    if (!tenant) return res.status(404).json({ error: 'Invalid portal link' });
+    // Include payment history
+    const payments = db.prepare(`
+      SELECT * FROM payments WHERE tenant_id = ? ORDER BY date_created DESC LIMIT 12
+    `).all(tenant.tenant_id);
+    res.json({ tenant, payments });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get portal token for a tenant (protected)
+protectedRouter.get('/tenants/:id/portal-link', (req, res) => {
+  try {
+    const db = getDb();
+    const tenant = db.prepare('SELECT portal_token FROM tenants WHERE tenant_id = ? AND account_id = ?').get(req.params.id, req.accountId);
+    if (!tenant) return res.status(404).json({ error: 'Tenant not found' });
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.json({ url: `${baseUrl}/tenant-portal/${tenant.portal_token}` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Payment webhook (public - no auth)
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
@@ -1463,7 +1584,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    message: 'PropManager SaaS API is running',
+    message: 'TrueNorth PM SaaS API is running',
     version: '3.0.0'
   });
 });
@@ -1471,7 +1592,7 @@ app.get('/health', (req, res) => {
 // Root / API docs
 app.get('/', (req, res) => {
   res.json({
-    name: 'PropManager SaaS API',
+    name: 'TrueNorth PM SaaS API',
     version: '3.0.0',
     description: 'Multi-tenant Property Management SaaS Platform',
     authentication: 'Bearer token (JWT) required for all /api/* routes',
@@ -1520,7 +1641,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 PropManager SaaS v3.0.0 running on http://localhost:${PORT}`);
+  console.log(`\n🚀 TrueNorth PM SaaS v3.0.0 running on http://localhost:${PORT}`);
   console.log(`📊 API Health: http://localhost:${PORT}/health`);
   console.log(`📖 API Docs: http://localhost:${PORT}`);
   console.log(`\n✨ Multi-Tenant SaaS Features:`);

@@ -1,4 +1,4 @@
-# Property Manager - Usage Guide
+# TrueNorth PM - Usage Guide
 
 ## Getting Started
 

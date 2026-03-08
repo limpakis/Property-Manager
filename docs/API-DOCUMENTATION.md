@@ -1,8 +1,8 @@
-# Property Manager API v2.0.0 Documentation
+# TrueNorth PM API v2.0.0 Documentation
 
 ## Overview
 
-The Property Manager API is a full-featured RESTful API built with Node.js and Express. It provides complete CRUD operations for properties, maintenance requests, vendors, and documents with persistent CSV storage.
+The TrueNorth PM API is a full-featured RESTful API built with Node.js and Express. It provides complete CRUD operations for properties, maintenance requests, vendors, and documents with persistent CSV storage.
 
 ## Base URL
 ```
@@ -34,7 +34,7 @@ Returns the API health status.
 {
   "status": "ok",
   "timestamp": "2026-02-16T21:43:21.210Z",
-  "message": "Property Manager API is running"
+  "message": "TrueNorth PM API is running"
 }
 ```
 

@@ -1,4 +1,4 @@
-# PropManager
+# TrueNorth PM
 
 A multi-tenant property management SaaS platform for small-to-medium landlords and property managers.
 

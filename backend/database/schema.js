@@ -103,6 +103,8 @@ export function initializeDatabase() {
       monthly_rent REAL,
       security_deposit REAL,
       status TEXT DEFAULT 'Active',
+      notes TEXT,
+      portal_token TEXT UNIQUE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
@@ -252,6 +254,16 @@ export function initializeDatabase() {
   `);
 
   console.log('✅ Database schema initialized');
+
+  // Run migrations for existing databases (idempotent)
+  const migrations = [
+    `ALTER TABLE tenants ADD COLUMN notes TEXT`,
+    `ALTER TABLE tenants ADD COLUMN portal_token TEXT`,
+  ];
+  for (const sql of migrations) {
+    try { db.exec(sql); } catch (_) { /* column already exists */ }
+  }
+
   return db;
 }
 
