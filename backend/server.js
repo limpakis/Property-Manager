@@ -1365,14 +1365,43 @@ protectedRouter.get('/payments/stats', (req, res) => {
 protectedRouter.get('/tenants', (req, res) => {
   try {
     const db = getDb();
-    const tenants = db.prepare(`
-      SELECT t.*, p.address, p.city, p.state
+    // Include tenants from the dedicated tenants table
+    const dedicatedTenants = db.prepare(`
+      SELECT t.tenant_id, t.tenant_name, t.email, t.phone, t.property_id,
+             p.address, p.city, p.state,
+             t.lease_start, t.lease_end, t.monthly_rent, t.security_deposit,
+             t.status, t.notes, t.portal_token, t.created_at,
+             'tenant' as source
       FROM tenants t
       LEFT JOIN properties p ON t.property_id = p.property_id
       WHERE t.account_id = ?
-      ORDER BY t.created_at DESC
     `).all(req.accountId);
-    res.json(tenants);
+
+    // IDs of properties already covered by dedicated tenant records
+    const coveredPropertyIds = new Set(dedicatedTenants.map(t => t.property_id).filter(Boolean));
+
+    // Also pull tenant info directly from properties that have tenant_name set
+    // but no dedicated tenant record yet (legacy data)
+    const propertyTenants = db.prepare(`
+      SELECT
+        p.property_id as tenant_id,
+        p.tenant_name, p.owner_email as email, p.tenant_phone as phone,
+        p.property_id, p.address, p.city, p.state,
+        p.lease_start, p.lease_end, p.monthly_rent,
+        NULL as security_deposit,
+        p.status, p.notes, NULL as portal_token,
+        p.date_added as created_at,
+        'property' as source
+      FROM properties p
+      WHERE p.account_id = ?
+        AND p.tenant_name IS NOT NULL
+        AND TRIM(p.tenant_name) != ''
+    `).all(req.accountId).filter(p => !coveredPropertyIds.has(p.property_id));
+
+    const all = [...dedicatedTenants, ...propertyTenants]
+      .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+    res.json(all);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
