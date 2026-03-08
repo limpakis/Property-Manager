@@ -1527,8 +1527,7 @@ protectedRouter.get('/tenants/:id/portal-link', (req, res) => {
       tenant.portal_token = portalToken;
     }
 
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    res.json({ url: `${baseUrl}/tenant-portal/${tenant.portal_token}` });
+    res.json({ token: tenant.portal_token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
