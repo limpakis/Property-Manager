@@ -1480,18 +1480,53 @@ app.get('/api/tenant-portal/:token', (req, res) => {
   try {
     const db = getDb();
     const tenant = db.prepare(`
-      SELECT t.tenant_id, t.tenant_name, t.email, t.phone, t.lease_start, t.lease_end, t.monthly_rent, t.security_deposit, t.status, t.notes,
-             p.address, p.city, p.state, p.monthly_rent as property_rent
+      SELECT t.tenant_id, t.tenant_name, t.email, t.phone, t.lease_start, t.lease_end,
+             t.monthly_rent, t.security_deposit, t.status, t.notes, t.property_id,
+             p.address, p.city, p.state, p.zip, p.bedrooms, p.bathrooms, p.square_feet,
+             p.property_type, p.owner_name, p.owner_phone, p.owner_email
       FROM tenants t
       LEFT JOIN properties p ON t.property_id = p.property_id
       WHERE t.portal_token = ?
     `).get(req.params.token);
     if (!tenant) return res.status(404).json({ error: 'Invalid portal link' });
-    // Include payment history
+
     const payments = db.prepare(`
-      SELECT * FROM payments WHERE tenant_id = ? ORDER BY date_created DESC LIMIT 12
+      SELECT payment_id, amount, net_amount, payment_method, status, date_created, date_completed, notes
+      FROM payments WHERE tenant_id = ? ORDER BY date_created DESC
     `).all(tenant.tenant_id);
-    res.json({ tenant, payments });
+
+    const requests = db.prepare(`
+      SELECT request_id, issue_description, category, priority, status, date_submitted, date_completed, notes
+      FROM maintenance_requests WHERE property_id = ? ORDER BY date_submitted DESC
+    `).all(tenant.property_id || '');
+
+    res.json({ tenant, payments, requests });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Tenant portal: submit maintenance request (public - validated by token)
+app.post('/api/tenant-portal/:token/request', express.json(), (req, res) => {
+  try {
+    const db = getDb();
+    const tenant = db.prepare(`SELECT tenant_id, tenant_name, property_id, account_id FROM tenants WHERE portal_token = ?`).get(req.params.token);
+    if (!tenant) return res.status(404).json({ error: 'Invalid portal link' });
+
+    const { issue_description, category, priority } = req.body;
+    if (!issue_description) return res.status(400).json({ error: 'issue_description is required' });
+
+    const property = tenant.property_id
+      ? db.prepare('SELECT address FROM properties WHERE property_id = ?').get(tenant.property_id)
+      : null;
+
+    const requestId = uuidv4();
+    db.prepare(`
+      INSERT INTO maintenance_requests (request_id, account_id, property_id, tenant_name, address, issue_description, category, priority, status, date_submitted)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Open', date('now'))
+    `).run(requestId, tenant.account_id, tenant.property_id || null, tenant.tenant_name, property?.address || '', issue_description, category || 'General', priority || 'Medium');
+
+    res.status(201).json({ success: true, request_id: requestId });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
