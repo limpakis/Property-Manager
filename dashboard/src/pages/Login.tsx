@@ -177,6 +177,12 @@ export default function Login() {
               </Link>
             </Button>
 
+            <Button className="w-full h-11 font-medium gradient-primary text-white border-0" asChild>
+              <Link to="/demo">
+                Explore Live Demo
+              </Link>
+            </Button>
+
             <p className="text-center text-xs text-muted-foreground">
               Or explore our{' '}
               <Link to="/roi-calculator" className="text-primary hover:underline font-medium">

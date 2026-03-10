@@ -18,6 +18,7 @@ import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import DemoLogin from "./pages/DemoLogin";
 import ROICalculator from "./pages/ROICalculator";
 import TenantPortal from "./pages/TenantPortal";
 import NotFound from "./pages/NotFound";
@@ -69,6 +70,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+      <Route path="/demo" element={<DemoLogin />} />
       <Route path="/roi-calculator" element={<ROICalculator />} />
       <Route path="/tenant-portal/:token" element={<TenantPortal />} />
       
