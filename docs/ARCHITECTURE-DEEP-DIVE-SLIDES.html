@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Software Architecture Deep Dive — General</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0b1020;
+      color: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, #22d3ee, #a78bfa);
+      transition: width .25s ease;
+      z-index: 1000;
+    }
+
+    .counter {
+      position: fixed;
+      right: 20px;
+      bottom: 16px;
+      color: #94a3b8;
+      font-size: 13px;
+      z-index: 1000;
+    }
+
+    .hint {
+      position: fixed;
+      left: 20px;
+      bottom: 16px;
+      color: #64748b;
+      font-size: 12px;
+      z-index: 1000;
+    }
+
+    .slide {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 52px 68px;
+      background: radial-gradient(circle at top right, rgba(34,211,238,.08), transparent 35%),
+                  radial-gradient(circle at bottom left, rgba(167,139,250,.08), transparent 35%),
+                  #0b1020;
+    }
+
+    .slide.active { display: block; }
+
+    h1 { font-size: 44px; color: #f8fafc; margin-bottom: 14px; line-height: 1.1; }
+    h2 { font-size: 34px; color: #f1f5f9; margin-bottom: 12px; }
+    h3 { font-size: 20px; color: #cbd5e1; margin-bottom: 8px; }
+    p, li { font-size: 17px; line-height: 1.55; color: #cbd5e1; }
+
+    .tag {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #22d3ee;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 21px;
+      margin-bottom: 22px;
+      max-width: 1100px;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 10px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 10px; }
+
+    .card {
+      background: rgba(15,23,42,.72);
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    ul { padding-left: 22px; }
+
+    .small { font-size: 14px; color: #94a3b8; }
+
+    .code {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      color: #bae6fd;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 14px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .mermaid-wrap {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 15px; }
+    th, td { border: 1px solid #334155; padding: 9px; text-align: left; vertical-align: top; }
+    th { background: #111827; color: #f8fafc; }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid #475569;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-right: 6px;
+      margin-top: 6px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <div class="counter" id="counter"></div>
+  <div class="hint">←/→ or Space to navigate</div>
+
+  <section class="slide active">
+    <div class="tag">General Software Engineering</div>
+    <h1>How Software Systems Work (In General)</h1>
+    <p class="subtitle">A technology-agnostic deep dive into frontend, backend, databases, APIs, architecture contracts, runtime lifecycle, and why teams choose one architecture over another.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>What this is</h3>
+        <ul>
+          <li>General architecture knowledge</li>
+          <li>Valid for many app types: SaaS, e-commerce, internal tools, social apps, marketplaces</li>
+          <li>Focus on engineering principles, not one framework only</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What you will learn</h3>
+        <ul>
+          <li>Layer responsibilities and boundaries</li>
+          <li>How data and requests move in real runtime</li>
+          <li>What a contract means in system design</li>
+          <li>Tradeoffs: why option A vs B</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">System Model</div>
+    <h2>Universal Architecture Layers</h2>
+    <p class="subtitle">Most production apps can be understood using this model regardless of language/framework.</p>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart TD
+  U[Client: Browser/Mobile/Desktop] --> FE[Presentation Layer\nUI + Interaction]
+  FE --> API[API Contract Layer\nEndpoints + Schemas + Status Codes]
+  API --> BE[Application Layer\nAuth + Business Logic + Orchestration]
+  BE --> DB[(Data Layer\nSQL/NoSQL)]
+  BE --> EXT[External Systems\nPayments/Email/Storage/Analytics]
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="card"><h3>Presentation</h3><p>User experience and interaction logic.</p></div>
+      <div class="card"><h3>Application</h3><p>Policy, trust, and processing logic.</p></div>
+      <div class="card"><h3>Data</h3><p>Persistent source of truth.</p></div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Responsibilities</div>
+    <h2>Frontend vs Backend — Precise Boundaries</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Frontend responsibilities</h3>
+        <ul>
+          <li>Render views and components</li>
+          <li>Collect user input</li>
+          <li>Call APIs and show state transitions</li>
+          <li>Client-side validation for UX</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Backend responsibilities</h3>
+        <ul>
+          <li>Authenticate and authorize users</li>
+          <li>Validate input for security/integrity</li>
+          <li>Execute business rules</li>
+          <li>Persist and query data</li>
+          <li>Integrate with external services</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3>Why this split exists</h3>
+      <p>Clients are untrusted environments. Servers are controlled environments. Trust-sensitive decisions must happen server-side.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Contracts</div>
+    <h2>What "Contract" Means in Software Architecture</h2>
+    <table>
+      <thead>
+        <tr><th>Contract Type</th><th>Defines</th><th>Typical Format</th><th>Failure if unclear</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>API Contract</td><td>How services communicate</td><td>REST/GraphQL + JSON schema</td><td>Frontend/backend breakage</td></tr>
+        <tr><td>Data Contract</td><td>What is valid stored data</td><td>DB schema, constraints</td><td>Corrupt or inconsistent data</td></tr>
+        <tr><td>Type Contract</td><td>Code-level value shape</td><td>TypeScript/IDL/types</td><td>Runtime type bugs</td></tr>
+        <tr><td>Business Contract</td><td>Domain rules and policies</td><td>Rule engine/service logic</td><td>Incorrect product behavior</td></tr>
+      </tbody>
+    </table>
+    <div class="grid-2" style="margin-top:12px;">
+      <div class="card">
+        <h3>API Contract — Real example</h3>
+        <p><b>Endpoint:</b> <code>POST /api/auth/login</code></p>
+        <p><b>Request:</b> <code>{ email, password }</code></p>
+        <p><b>Response:</b> <code>{ token, user, account }</code></p>
+      </div>
+      <div class="card">
+        <h3>Data Contract — Real example</h3>
+        <p><b>Table rule:</b> users.email must be unique</p>
+        <p><b>Constraint:</b> subscription_tier ∈ {starter, professional, enterprise}</p>
+      </div>
+      <div class="card">
+        <h3>Type Contract — Real example</h3>
+        <p><b>Frontend interface:</b> <code>type User = { user_id: string; role: 'admin' | 'manager' | 'viewer' }</code></p>
+        <p class="small">If backend returns a different shape, TypeScript warns immediately.</p>
+      </div>
+      <div class="card">
+        <h3>Business Contract — Real example</h3>
+        <p><b>Rule:</b> only <code>admin</code> can invite/remove team members.</p>
+        <p><b>Rule:</b> inactive subscriptions can be blocked with <code>402</code>.</p>
+      </div>
+    </div>
+    <div class="code">Strong systems make contracts explicit, versioned, and testable.</div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Runtime</div>
+    <h2>What Happens from URL Entry to First Render</h2>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+sequenceDiagram
+  participant User
+  participant Browser
+  participant Edge as CDN/Edge
+  participant FE as Frontend Assets
+  participant API as Backend API
+
+  User->>Browser: Enter URL
+  Browser->>Edge: DNS + TLS + request
+  Edge->>FE: Fetch HTML/CSS/JS
+  FE-->>Browser: Static assets
+  Browser->>Browser: Execute app bundle
+  Browser->>API: Optional bootstrap call (profile/config)
+  API-->>Browser: JSON response
+  Browser-->>User: First interactive render
+      </div>
+    </div>
+    <p class="small">Understanding this timeline helps you debug slow loads, auth flashes, and startup failures.</p>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Runtime</div>
+    <h2>What Happens on Any Create/Update Action</h2>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+sequenceDiagram
+  participant UI as Client UI
+  participant Net as HTTP Layer
+  participant App as Backend App
+  participant MW as Middleware
+  participant Store as Database
+
+  UI->>Net: Send request (JSON + headers)
+  Net->>App: Route request
+  App->>MW: Auth, authz, validation
+  MW-->>App: Approved/Rejected
+  App->>Store: Read/Write transaction
+  Store-->>App: Result
+  App-->>UI: Status + response body
+  UI-->>UI: Update state/re-render
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3>Why this model scales</h3>
+      <p>Clear control points (middleware, data layer, response contract) make behavior predictable under growth.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Data Architecture</div>
+    <h2>Choosing SQL vs NoSQL (General Decision Framework)</h2>
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th>SQL (PostgreSQL/MySQL/SQLite)</th><th>NoSQL (MongoDB/Redis/etc)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Data shape</td><td>Structured, relational</td><td>Flexible or key-value/document-heavy</td></tr>
+        <tr><td>Transactions</td><td>Strong ACID support</td><td>Varies by engine</td></tr>
+        <tr><td>Query style</td><td>Complex joins/reporting strong</td><td>Fast access for specific patterns</td></tr>
+        <tr><td>Best for</td><td>Business apps, finance, reporting</td><td>High-scale events, caching, flexible documents</td></tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:12px;">
+      <h3>General rule</h3>
+      <p>If your domain has many relationships and strict consistency, start with SQL unless there is a clear reason not to.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">API Styles</div>
+    <h2>REST vs GraphQL vs RPC — Why Pick One?</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h3>REST</h3>
+        <ul>
+          <li>Resource-oriented URLs</li>
+          <li>Simple and widely understood</li>
+          <li>Great default for many teams</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>GraphQL</h3>
+        <ul>
+          <li>Client chooses response shape</li>
+          <li>Reduces over/under fetching</li>
+          <li>Higher schema/tooling complexity</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>RPC/tRPC/gRPC</h3>
+        <ul>
+          <li>Procedure/function-style APIs</li>
+          <li>Strong typing and performance options</li>
+          <li>Different ecosystem tradeoffs</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Security</div>
+    <h2>Authentication, Authorization, Validation, Observability</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Authentication</h3>
+        <p>Prove identity (JWT, session, OAuth).</p>
+        <h3 style="margin-top:8px;">Authorization</h3>
+        <p>Enforce permissions (RBAC/ABAC/policies).</p>
+      </div>
+      <div class="card">
+        <h3>Validation</h3>
+        <p>Reject invalid/malicious input at backend boundary.</p>
+        <h3 style="margin-top:8px;">Observability</h3>
+        <p>Logs + metrics + tracing for debugging production behavior.</p>
+      </div>
+    </div>
+    <div class="code">No security model is complete without: least privilege + validated inputs + auditability.</div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Tradeoffs</div>
+    <h2>Architecture Choices and Their Costs</h2>
+    <table>
+      <thead>
+        <tr><th>Choice</th><th>Option A</th><th>Option B</th><th>How to choose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Rendering</td><td>SPA (client-heavy)</td><td>SSR/Hybrid</td><td>Interactivity-heavy vs SEO/content-heavy</td></tr>
+        <tr><td>Backend style</td><td>Minimal framework</td><td>Opinionated framework</td><td>Speed/flexibility vs structure/governance</td></tr>
+        <tr><td>Data model</td><td>SQL-first</td><td>NoSQL-first</td><td>Relational consistency vs flexible/event scale</td></tr>
+        <tr><td>Auth transport</td><td>JWT</td><td>Server sessions</td><td>Stateless APIs vs central revocation simplicity</td></tr>
+        <tr><td>Integration style</td><td>Synchronous API calls</td><td>Async events/queues</td><td>Immediate response vs decoupled reliability</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide">
+    <div class="tag">General Deployment</div>
+    <h2>Environment Model and Production Reliability</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Environments</h3>
+        <ul>
+          <li>Local development</li>
+          <li>Staging/pre-production</li>
+          <li>Production</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Non-negotiables</h3>
+        <ul>
+          <li>Environment variables for secrets</li>
+          <li>Health checks and monitoring</li>
+          <li>Error handling and retry strategy</li>
+          <li>Backup and recovery plan</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3>Architecture maturity path</h3>
+      <p>MVP -> modularization -> automated tests -> observability -> scaling data/infrastructure.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Case Study (Optional)</div>
+    <h2>Applying These Principles to Your Property Manager App</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Mapping</h3>
+        <ul>
+          <li>Presentation: React + Router + Query cache</li>
+          <li>Application: Express + middleware chain</li>
+          <li>Data: SQLite relational model</li>
+          <li>Contracts: REST JSON endpoints</li>
+          <li>External systems: Stripe webhooks</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Why this still generalizes</h3>
+        <ul>
+          <li>The same architecture pattern works for many products</li>
+          <li>Only domain entities and rules change</li>
+          <li>Core runtime lifecycle remains the same</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Real Code Communication</div>
+    <h2>How Files Communicate in Actual Frontend Code</h2>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart LR
+  A[App.tsx\nRoute + Providers] --> B[Page Component\nex: Properties.tsx]
+  B --> C[usePropertyQueries.ts\nuseQuery/useMutation]
+  C --> D[api.ts\nfetchAPI helper]
+  D --> E[/api HTTP request]
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Read flow example</h3>
+        <ul>
+          <li>Route <b>/properties</b> loads page component</li>
+          <li>Page calls <b>useProperties()</b></li>
+          <li>Hook calls <b>api.getProperties()</b></li>
+          <li>API helper sends <b>GET /api/properties</b> with Bearer token</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Write flow example</h3>
+        <ul>
+          <li>Mutation calls <b>api.createProperty()</b></li>
+          <li>Backend returns success JSON</li>
+          <li>React Query invalidates <b>properties</b> and <b>dashboard-stats</b></li>
+          <li>UI refetches and re-renders with fresh server truth</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Real Code Communication</div>
+    <h2>How Services Communicate in Actual Backend Code</h2>
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+flowchart TD
+  Req[HTTP request /api/properties] --> R[Express route in server.js]
+  R --> M1[authenticate middleware]
+  M1 --> M2[requireActiveSubscription]
+  M2 --> M3[checkPropertyLimit + validate schema]
+  M3 --> BL[Business logic handler]
+  BL --> DB[(SQLite via getDb)]
+  DB --> Res[JSON response]
+      </div>
+    </div>
+    <div class="card">
+      <h3>Concrete example: Create Property</h3>
+      <p>The handler in <b>server.js</b> receives <b>POST /properties</b>, applies middlewares, inserts into <b>properties</b>, updates <b>accounts.current_property_count</b>, writes <b>usage_logs</b>, and returns <b>201</b>.</p>
+      <div class="code">protectedRouter.post('/properties', checkPropertyLimit, validate(propertySchema), ...)</div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3>What this means architecturally</h3>
+      <p>Each backend service has a role: routing service (Express), policy service (middleware), persistence service (SQLite), and integration service (Stripe/webhooks).</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Frameworks in Practice</div>
+    <h2>What Is a Framework? (With Your Real Stack)</h2>
+    <table>
+      <thead>
+        <tr><th>Framework/Tool</th><th>What it gives you</th><th>What your code provides</th><th>Where seen in project</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>React</td>
+          <td>Component lifecycle, rendering model, hooks API</td>
+          <td>Pages/components and state behavior</td>
+          <td>App.tsx, pages/, contexts/</td>
+        </tr>
+        <tr>
+          <td>Express</td>
+          <td>HTTP server, routing, middleware pipeline</td>
+          <td>Business logic and route handlers</td>
+          <td>backend/server.js, routes/</td>
+        </tr>
+        <tr>
+          <td>TanStack Query</td>
+          <td>Caching, stale time, invalidation, mutation flow</td>
+          <td>Query functions and invalidation rules</td>
+          <td>usePropertyQueries.ts</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="card" style="margin-top:12px;">
+      <h3>Simple definition</h3>
+      <p>A framework is prebuilt structure + lifecycle. Your app plugs business logic into that structure instead of building all infrastructure from zero.</p>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Debugging Map</div>
+    <h2>Where to Look When Communication Breaks</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>If auth/route access fails</h3>
+        <ul>
+          <li>Frontend: <b>AuthContext.tsx</b> and <b>App.tsx</b> protected routes</li>
+          <li>Backend: <b>middleware/auth.js</b> (`authenticate`)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>If requests return 401/402</h3>
+        <ul>
+          <li>Frontend: token injection in <b>api.ts</b></li>
+          <li>Backend: `requireActiveSubscription` logic</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>If UI stale after write</h3>
+        <ul>
+          <li>Check mutation <b>onSuccess</b> invalidations</li>
+          <li>Verify query keys match read hooks</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>If data looks wrong</h3>
+        <ul>
+          <li>Inspect SQL in route handlers</li>
+          <li>Confirm account_id filtering exists</li>
+          <li>Check response-field mapping for frontend</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="tag">Final Summary</div>
+    <h2>What You Should Be Able to Explain After This</h2>
+    <div class="grid-3">
+      <div class="card"><h3>1) Layering</h3><p>What each layer does and why boundaries matter.</p></div>
+      <div class="card"><h3>2) Runtime</h3><p>How requests flow from user action to persistent state.</p></div>
+      <div class="card"><h3>3) Decisions</h3><p>How to justify architecture options with tradeoffs.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <h3>Practice prompt</h3>
+      <p>Take any feature in any app and explain it as: UI trigger -> API contract -> backend checks -> data operation -> response -> UI update.</p>
+    </div>
+    <p class="small" style="margin-top: 10px;">File: docs/ARCHITECTURE-DEEP-DIVE-SLIDES.html</p>
+  </section>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const progress = document.getElementById('progress');
+    const counter = document.getElementById('counter');
+    let index = 0;
+
+    function render() {
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    }
+
+    function next() {
+      if (index < slides.length - 1) { index++; render(); }
+    }
+
+    function prev() {
+      if (index > 0) { index--; render(); }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); next(); }
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+      if (e.key === 'Home') { index = 0; render(); }
+      if (e.key === 'End') { index = slides.length - 1; render(); }
+    });
+
+    window.addEventListener('click', () => next());
+    render();
+  </script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 // API configuration - Multi-tenant SaaS
 // In development: uses http://localhost:3001/api
 // In production:  uses the VITE_API_URL environment variable set in Vercel
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const PROD_API_URL = 'https://property-manager-production-a304.up.railway.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || PROD_API_URL;
 
 // Get stored auth token
 function getAuthToken(): string | null {
