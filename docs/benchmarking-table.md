@@ -20,3 +20,11 @@
 - Δείτε τα δυνατά σημεία κάθε ανταγωνιστή.
 - Εντοπίστε κενά ή σημεία προς βελτίωση στη δική σας εφαρμογή.
 - Χρησιμοποιήστε τους συνδέσμους που δόθηκαν για να μελετήσετε UI και χαρακτηριστικά για έμπνευση.
+
+## 3 Ιδέες για αντιγραφή (UI/UX)
+- Hover micro-interaction σε icons/κουμπιά (αντιγραφή από macos): όταν περνάει το ποντίκι, το στοιχείο κάνει μικρό zoom (π.χ. scale 1.05 για 150-200ms) για πιο δυναμική αίσθηση.
+	![macOS hover micro-interaction](images/macos.png)
+- Timeline-style γράφημα λήξης μισθώσεων (αντιγραφή από Linear): προβολή lease/rent expirations σε καθαρό timeline για άμεσο εντοπισμό λήξεων 30/60 ημερών και overdue ανανεώσεων.
+	![Linear timeline inspiration](images/linear.png)
+- Αισθητική Stripe για premium UI (αντιγραφή από Stripe): καθαρή τυπογραφία, έντονο visual hierarchy, gradient λεπτομέρειες και ομαλά transitions για πιο σύγχρονη και επαγγελματική εμπειρία.
+	![Stripe aesthetic inspiration](images/stripe.png)
